@@ -158,3 +158,5 @@ seven_segment(test)
 
 #here the network should run printing at each step
 evolve(test,w)
+
+evolve(six,w)
