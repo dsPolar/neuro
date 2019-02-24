@@ -12,6 +12,7 @@
 #Of the the tests patterns
 #Any patterns formed as the patterns are updated
 
+const global theta = 0
 
 #Takes an 11 component vector and prints the corresponding seven segment
 function seven_segment(pattern::Array{Int64})
@@ -70,21 +71,59 @@ function seven_segment(pattern::Array{Int64})
 
 end
 
-function hopfield(patterns::Array{Int64})
-    w = zeros(Float64, (11,11));
-
+function hopfield(patterns::Array{Int64}, w::Array{Float64})
     for i in 1:11
         for j in 1:11
             if i != j
-                sum = 0;
+                sum = 0
                 for p in 1:3
-                    sum += patterns[p,i] * patterns[p,j];
+                    sum += patterns[p,i] * patterns[p,j]
                 end
-                w[i,j] = (1 ÷ 3) * sum;
+                w[i,j] = (1/3) * sum
             end
         end
     end
 end
+
+function mp_update(pattern::Array{Int64}, w::Array{Float64})
+    function g(z)
+        val = -1
+        if z > 0
+            val = 1
+        end
+        return val
+    end
+
+    change = false
+    sum = 0.0
+    temp = copy(pattern)
+
+    for i in 1:11
+        for j in 1:11
+            if i != j
+                sum += w[i,j] * temp[j] - theta
+            end
+        end
+        pattern[i] = g(sum)
+        if !change
+            if(pattern[i] != temp[i])
+                change = true
+            end
+        end
+    end
+    return change
+end
+
+function evolve(pattern::Array{Int64}, w::Array{Float64})
+    change = false
+
+    while !change
+        change = mp_update(pattern,w)
+        seven_segment(pattern)
+    end
+end
+
+
 
 six=Int64[1,1,-1,1,1,1,1,-1,1,1,-1]
 three=Int64[1,-1,1,1,-1,1,1,1,1,-1,-1]
@@ -95,8 +134,9 @@ seven_segment(six)
 seven_segment(one)
 
 #------------------
+w = zeros(Float64, (11,11))
 
-hopfield([six,three,one]);
+hopfield([six,three,one],w)
 
 println("test1")
 
@@ -105,6 +145,7 @@ test=Int64[1,-1,1,1,-1,1,1,-1,-1,-1,-1]
 seven_segment(test)
 
 #here the network should run printing at each step
+evolve(test,w)
 
 println("test2")
 
@@ -113,3 +154,4 @@ test=Int64[1,1,1,1,1,1,1,-1,-1,-1,-1]
 seven_segment(test)
 
 #here the network should run printing at each step
+evolve(test,w)
