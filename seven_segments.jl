@@ -71,14 +71,16 @@ function seven_segment(pattern::Array{Int64})
 
 end
 
-function hopfield(patterns::Array{Int64}, w::Array{Float64})
+function hopfield(a::Array{Int64}, b::Array{Int64}, c::Array{Int64}, w::Array{Float64})
     for i in 1:11
         for j in 1:11
             if i != j
                 sum = 0
-                for p in 0:2
-                    sum += patterns[p*11+i] * patterns[p*11+j]
-                end
+
+                sum += a[i] * a[j]
+                sum += b[i] * b[j]
+                sum += c[i] * c[j]
+
                 w[i,j] = (1/3) * sum
             end
         end
@@ -115,9 +117,9 @@ function mp_update(pattern::Array{Int64}, w::Array{Float64})
 end
 
 function evolve(pattern::Array{Int64}, w::Array{Float64})
-    change = false
+    change = true
 
-    while !change
+    while change
         change = mp_update(pattern,w)
         seven_segment(pattern)
     end
@@ -136,7 +138,8 @@ seven_segment(one)
 #------------------
 w = zeros(Float64, (11,11))
 
-hopfield([six;three;one],w)
+hopfield(six,three,one,w)
+print(w)
 
 println("test1")
 
