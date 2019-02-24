@@ -76,8 +76,8 @@ function hopfield(patterns::Array{Int64}, w::Array{Float64})
         for j in 1:11
             if i != j
                 sum = 0
-                for p in 1:3
-                    sum += patterns[p,i] * patterns[p,j]
+                for p in 0:2
+                    sum += patterns[p*11+i] * patterns[p*11+j]
                 end
                 w[i,j] = (1/3) * sum
             end
@@ -136,7 +136,7 @@ seven_segment(one)
 #------------------
 w = zeros(Float64, (11,11))
 
-hopfield([six,three,one],w)
+hopfield([six;three;one],w)
 
 println("test1")
 
