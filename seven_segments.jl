@@ -101,9 +101,10 @@ function mp_update(pattern::Array{Int64}, w::Array{Float64})
     temp = copy(pattern)
 
     for i in 1:11
+        sum = 0.0
         for j in 1:11
             if i != j
-                sum += w[i,j] * temp[j] - theta
+                sum += (w[i,j] * temp[j]) - theta
             end
         end
         pattern[i] = g(sum)
@@ -139,7 +140,6 @@ seven_segment(one)
 w = zeros(Float64, (11,11))
 
 hopfield(six,three,one,w)
-print(w)
 
 println("test1")
 
@@ -158,5 +158,3 @@ seven_segment(test)
 
 #here the network should run printing at each step
 evolve(test,w)
-
-evolve(six,w)
