@@ -12,6 +12,7 @@
 #Of the the tests patterns
 #Any patterns formed as the patterns are updated
 
+using Printf
 const global theta = 0
 
 #Takes an 11 component vector and prints the corresponding seven segment
@@ -123,24 +124,50 @@ function evolve(pattern::Array{Int64}, w::Array{Float64})
     while change
         change = mp_update(pattern,w)
         seven_segment(pattern)
+        print_energy(energy(pattern,w))
     end
 end
 
+#Add a function to calculate the energy of a configuration
+# E = -1/2 SIGMA_ij x_i w_ij x_j
 
+function energy(pattern::Array{Int64}, w::Array{Float64})
+    sum = 0.0
+    for i in 1:11
+        for j in 1:11
+            if i != j
+                sum += pattern[i] * pattern[j] * w[i,j]
+            end
+        end
+    end
+    en = sum * (-1/2)
+    return en
+end
+
+function print_energy(num)
+    @printf "Energy of pattern : %f\n" num
+end
+
+
+
+w = zeros(Float64, (11,11))
 
 six=Int64[1,1,-1,1,1,1,1,-1,1,1,-1]
 three=Int64[1,-1,1,1,-1,1,1,1,1,-1,-1]
 one=Int64[-1,-1,1,-1,-1,1,-1,1,-1,-1,-1]
 
-seven_segment(three)
-seven_segment(six)
-seven_segment(one)
-
-#------------------
-w = zeros(Float64, (11,11))
-
 hopfield(six,three,one,w)
 
+seven_segment(three)
+print_energy(energy(three,w))
+
+seven_segment(six)
+print_energy(energy(six,w))
+
+seven_segment(one)
+print_energy(energy(one,w))
+
+#------------------
 println("test1")
 
 test=Int64[1,-1,1,1,-1,1,1,-1,-1,-1,-1]
