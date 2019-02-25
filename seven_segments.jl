@@ -120,11 +120,16 @@ end
 
 function evolve(pattern::Array{Int64}, w::Array{Float64})
     change = true
-
+    c = 0
     while change
         change = mp_update(pattern,w)
         seven_segment(pattern)
         print_energy(energy(pattern,w))
+        c+=1
+        println(c)
+        if c > 15
+            change = false
+        end
     end
 end
 
@@ -173,7 +178,7 @@ println("test1")
 test=Int64[1,-1,1,1,-1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
-
+print_energy(energy(test,w))
 #here the network should run printing at each step
 evolve(test,w)
 
@@ -182,6 +187,14 @@ println("test2")
 test=Int64[1,1,1,1,1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
+print_energy(energy(test,w))
 
 #here the network should run printing at each step
+evolve(test,w)
+
+
+println("test3")
+test = rand([1,-1],11)
+seven_segment(test)
+print_energy(energy(test,w))
 evolve(test,w)
