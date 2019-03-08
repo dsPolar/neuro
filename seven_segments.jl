@@ -121,12 +121,15 @@ function mp_update(pattern::Array{Int64}, w::Array{Float64})
 end
 
 #Lines involving c were used to test cycling in the system on random test input
-function evolve(pattern::Array{Int64}, w::Array{Float64})
+function evolve(pattern::Array{Int64}, w::Array{Float64}, f::IOStream)
     change = true
     #c = 0
     while change
         change = mp_update(pattern,w)
         seven_segment(pattern)
+        seven_segment(f,pattern)
+        qquad(f)
+        print_number(f,energy(pattern,w))
         print_energy(energy(pattern,w))
         #c+=1
         #println(c)
@@ -157,6 +160,13 @@ function print_energy(num)
 end
 
 
+f=open("./david_sharp.tex","w")
+header(f,"David Sharp")
+section(f,"A matrix")
+example_matrix=rand(-1.0:0.01:2.0, 3, 4)
+matrix_print(f,"C",example_matrix)
+
+section(f,"Seven Segment Attractor Patterns")
 
 w = zeros(Float64, (11,11))
 
@@ -167,33 +177,57 @@ one=Int64[-1,-1,1,-1,-1,1,-1,1,-1,-1,-1]
 hopfield(six,three,one,w)
 
 seven_segment(three)
+seven_segment(f,three)
+qquad(f)
+print_number(f,energy(three,w))
+cr(f)
 print_energy(energy(three,w))
 
+
 seven_segment(six)
+seven_segment(f,three)
+qquad(f)
+print_number(f,energy(six,w))
 print_energy(energy(six,w))
 
 seven_segment(one)
+seven_segment(f,three)
+qquad(f)
+print_number(f,energy(one,w))
 print_energy(energy(one,w))
+
+cr(f)
 
 #------------------
 println("test1")
-
+section(f,"Test Pattern 1")
 test=Int64[1,-1,1,1,-1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
+seven_segment(f,test)
+qquad(f)
+print_number(energy(test,w))
 print_energy(energy(test,w))
 #here the network should run printing at each step
-evolve(test,w)
+evolve(test,w,f)
+cr(f)
 
 println("test2")
-
+section(f,"Test Pattern 2")
 test=Int64[1,1,1,1,1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
+seven_segment(f,test)
+qquad(f)
+print_number(f,energy(test,w))
 print_energy(energy(test,w))
 
 #here the network should run printing at each step
-evolve(test,w)
+evolve(test,w,f)
+cr(f)
+
+bottomer(f)
+close(f)
 
 #Random test pattern generation used to test the amount of cycles that exist
 #in the system with three attractor states, found two pairs of states that
