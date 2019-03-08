@@ -13,6 +13,7 @@
 #Any patterns formed as the patterns are updated
 
 include("submission.jl")
+using Printf
 
 const global theta = 0
 
@@ -73,16 +74,16 @@ function seven_segment(pattern::Array{Int64})
 
 end
 
-#Patterns is a single array containing all three attractor states
-#Accessed here by using state offset + 11 * state number
-function hopfield(patterns::Array{Int64}, w::Array{Float64})
+function hopfield(a::Array{Int64}, b::Array{Int64}, c::Array{Int64}, w::Array{Float64})
     for i in 1:11
         for j in 1:11
             if i != j
                 sum = 0
-                for p in 0:2
-                    sum += patterns[p*11+i] * patterns[p*11+j]
-                end
+
+                sum += a[i] * a[j]
+                sum += b[i] * b[j]
+                sum += c[i] * c[j]
+
                 w[i,j] = (1/3) * sum
             end
         end
@@ -103,9 +104,10 @@ function mp_update(pattern::Array{Int64}, w::Array{Float64})
     temp = copy(pattern)
 
     for i in 1:11
+        sum = 0.0
         for j in 1:11
             if i != j
-                sum += w[i,j] * temp[j] - theta
+                sum += (w[i,j] * temp[j]) - theta
             end
         end
         pattern[i] = g(sum)
@@ -118,36 +120,68 @@ function mp_update(pattern::Array{Int64}, w::Array{Float64})
     return change
 end
 
+#Lines involving c were used to test cycling in the system on random test input
 function evolve(pattern::Array{Int64}, w::Array{Float64})
     change = true
-
+    #c = 0
     while change
         change = mp_update(pattern,w)
         seven_segment(pattern)
+        print_energy(energy(pattern,w))
+        #c+=1
+        #println(c)
+        #if c > 15
+        #    change = false
+        #end
     end
 end
 
+#Add a function to calculate the energy of a configuration
+# E = -1/2 SIGMA_ij x_i w_ij x_j
 
+function energy(pattern::Array{Int64}, w::Array{Float64})
+    sum = 0.0
+    for i in 1:11
+        for j in 1:11
+            if i != j
+                sum += pattern[i] * pattern[j] * w[i,j]
+            end
+        end
+    end
+    en = sum * (-1/2)
+    return en
+end
+
+function print_energy(num)
+    @printf "Energy of pattern : %f\n" num
+end
+
+
+
+w = zeros(Float64, (11,11))
 
 six=Int64[1,1,-1,1,1,1,1,-1,1,1,-1]
 three=Int64[1,-1,1,1,-1,1,1,1,1,-1,-1]
 one=Int64[-1,-1,1,-1,-1,1,-1,1,-1,-1,-1]
 
+hopfield(six,three,one,w)
+
 seven_segment(three)
+print_energy(energy(three,w))
+
 seven_segment(six)
+print_energy(energy(six,w))
+
 seven_segment(one)
+print_energy(energy(one,w))
 
 #------------------
-w = zeros(Float64, (11,11))
-
-hopfield([six;three;one],w)
-
 println("test1")
 
 test=Int64[1,-1,1,1,-1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
-
+print_energy(energy(test,w))
 #here the network should run printing at each step
 evolve(test,w)
 
@@ -156,6 +190,14 @@ println("test2")
 test=Int64[1,1,1,1,1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
+print_energy(energy(test,w))
 
 #here the network should run printing at each step
+evolve(test,w)
+
+
+println("test3")
+test = rand([1,-1],11)
+seven_segment(test)
+print_energy(energy(test,w))
 evolve(test,w)
