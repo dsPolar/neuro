@@ -12,6 +12,8 @@
 #Of the the tests patterns
 #Any patterns formed as the patterns are updated
 
+include("submission.jl")
+
 const global theta = 0
 
 #Takes an 11 component vector and prints the corresponding seven segment
@@ -71,6 +73,8 @@ function seven_segment(pattern::Array{Int64})
 
 end
 
+#Patterns is a single array containing all three attractor states
+#Accessed here by using state offset + 11 * state number
 function hopfield(patterns::Array{Int64}, w::Array{Float64})
     for i in 1:11
         for j in 1:11
@@ -115,9 +119,9 @@ function mp_update(pattern::Array{Int64}, w::Array{Float64})
 end
 
 function evolve(pattern::Array{Int64}, w::Array{Float64})
-    change = false
+    change = true
 
-    while !change
+    while change
         change = mp_update(pattern,w)
         seven_segment(pattern)
     end
