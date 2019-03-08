@@ -195,9 +195,12 @@ print_energy(energy(test,w))
 #here the network should run printing at each step
 evolve(test,w)
 
+#Random test pattern generation used to test the amount of cycles that exist
+#in the system with three attractor states, found two pairs of states that
+#would flip flop
 
-println("test3")
-test = rand([1,-1],11)
-seven_segment(test)
-print_energy(energy(test,w))
-evolve(test,w)
+#println("test3")
+#test = rand([1,-1],11)
+#seven_segment(test)
+#print_energy(energy(test,w))
+#evolve(test,w)
