@@ -50,7 +50,7 @@ function  matrix_print(document,matrix_name,matrix,rounding=2)
     write(document,"}\n")
     for j in 1:n
         for i in 1:r
-            entry=string(round(matrix[j,i],rounding))
+            entry=string(round(matrix[j,i],digits=rounding))
             write(document,entry)
             if i!=r
                 write(document,"&")
@@ -90,7 +90,7 @@ function cr(document::IOStream)
 end
 
 function print_number(document::IOStream,number::Float64,rounding=3)
-    rounded=round(number,rounding)
+    rounded=round(number,digits=rounding)
     write(document," $rounded ")
 end
 

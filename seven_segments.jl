@@ -130,6 +130,7 @@ function evolve(pattern::Array{Int64}, w::Array{Float64}, f::IOStream)
         seven_segment(f,pattern)
         qquad(f)
         print_number(f,energy(pattern,w))
+        qquad(f)
         print_energy(energy(pattern,w))
         #c+=1
         #println(c)
@@ -162,11 +163,6 @@ end
 
 f=open("./david_sharp.tex","w")
 header(f,"David Sharp")
-section(f,"A matrix")
-example_matrix=rand(-1.0:0.01:2.0, 3, 4)
-matrix_print(f,"C",example_matrix)
-
-section(f,"Seven Segment Attractor Patterns")
 
 w = zeros(Float64, (11,11))
 
@@ -176,24 +172,16 @@ one=Int64[-1,-1,1,-1,-1,1,-1,1,-1,-1,-1]
 
 hopfield(six,three,one,w)
 
+section(f,"Weight matrix")
+matrix_print(f,"W",w)
+
 seven_segment(three)
-seven_segment(f,three)
-qquad(f)
-print_number(f,energy(three,w))
-cr(f)
 print_energy(energy(three,w))
 
-
 seven_segment(six)
-seven_segment(f,three)
-qquad(f)
-print_number(f,energy(six,w))
 print_energy(energy(six,w))
 
 seven_segment(one)
-seven_segment(f,three)
-qquad(f)
-print_number(f,energy(one,w))
 print_energy(energy(one,w))
 
 cr(f)
@@ -205,8 +193,10 @@ test=Int64[1,-1,1,1,-1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
 seven_segment(f,test)
+
 qquad(f)
-print_number(energy(test,w))
+print_number(f,energy(test,w))
+qquad(f)
 print_energy(energy(test,w))
 #here the network should run printing at each step
 evolve(test,w,f)
@@ -218,8 +208,10 @@ test=Int64[1,1,1,1,1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
 seven_segment(f,test)
+
 qquad(f)
 print_number(f,energy(test,w))
+qquad(f)
 print_energy(energy(test,w))
 
 #here the network should run printing at each step
