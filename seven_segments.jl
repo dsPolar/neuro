@@ -12,8 +12,10 @@
 #Of the the tests patterns
 #Any patterns formed as the patterns are updated
 
+include("submission.jl")
 using Printf
-const global theta = 0.02
+
+const global theta = 0
 
 #Takes an 11 component vector and prints the corresponding seven segment
 function seven_segment(pattern::Array{Int64})
@@ -118,18 +120,22 @@ function mp_update(pattern::Array{Int64}, w::Array{Float64})
     return change
 end
 
-function evolve(pattern::Array{Int64}, w::Array{Float64})
+#Lines involving c were used to test cycling in the system on random test input
+function evolve(pattern::Array{Int64}, w::Array{Float64}, f::IOStream)
     change = true
-    c = 0
+    #c = 0
     while change
         change = mp_update(pattern,w)
         seven_segment(pattern)
+        seven_segment(f,pattern)
+        qquad(f)
+        print_number(f,energy(pattern,w))
         print_energy(energy(pattern,w))
-        c+=1
-        println(c)
-        if c > 15
-            change = false
-        end
+        #c+=1
+        #println(c)
+        #if c > 15
+        #    change = false
+        #end
     end
 end
 
@@ -154,6 +160,13 @@ function print_energy(num)
 end
 
 
+f=open("./david_sharp.tex","w")
+header(f,"David Sharp")
+section(f,"A matrix")
+example_matrix=rand(-1.0:0.01:2.0, 3, 4)
+matrix_print(f,"C",example_matrix)
+
+section(f,"Seven Segment Attractor Patterns")
 
 w = zeros(Float64, (11,11))
 
@@ -164,37 +177,64 @@ one=Int64[-1,-1,1,-1,-1,1,-1,1,-1,-1,-1]
 hopfield(six,three,one,w)
 
 seven_segment(three)
+seven_segment(f,three)
+qquad(f)
+print_number(f,energy(three,w))
+cr(f)
 print_energy(energy(three,w))
 
+
 seven_segment(six)
+seven_segment(f,three)
+qquad(f)
+print_number(f,energy(six,w))
 print_energy(energy(six,w))
 
 seven_segment(one)
+seven_segment(f,three)
+qquad(f)
+print_number(f,energy(one,w))
 print_energy(energy(one,w))
+
+cr(f)
 
 #------------------
 println("test1")
-
+section(f,"Test Pattern 1")
 test=Int64[1,-1,1,1,-1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
+seven_segment(f,test)
+qquad(f)
+print_number(energy(test,w))
 print_energy(energy(test,w))
 #here the network should run printing at each step
-evolve(test,w)
+evolve(test,w,f)
+cr(f)
 
 println("test2")
-
+section(f,"Test Pattern 2")
 test=Int64[1,1,1,1,1,1,1,-1,-1,-1,-1]
 
 seven_segment(test)
+seven_segment(f,test)
+qquad(f)
+print_number(f,energy(test,w))
 print_energy(energy(test,w))
 
 #here the network should run printing at each step
-evolve(test,w)
+evolve(test,w,f)
+cr(f)
 
+bottomer(f)
+close(f)
 
-println("test3")
-test = rand([1,-1],11)
-seven_segment(test)
-print_energy(energy(test,w))
-evolve(test,w)
+#Random test pattern generation used to test the amount of cycles that exist
+#in the system with three attractor states, found two pairs of states that
+#would flip flop
+
+#println("test3")
+#test = rand([1,-1],11)
+#seven_segment(test)
+#print_energy(energy(test,w))
+#evolve(test,w)
