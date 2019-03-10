@@ -13,7 +13,7 @@
 #Any patterns formed as the patterns are updated
 
 using Printf
-const global theta = 0
+const global theta = 0.02
 
 #Takes an 11 component vector and prints the corresponding seven segment
 function seven_segment(pattern::Array{Int64})
