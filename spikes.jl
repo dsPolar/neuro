@@ -19,11 +19,10 @@ include("load.jl")
 include("poisson.jl")
 using Printf
 using Statistics
-using Core
-using Base
+using PyPlot
 
-const global rho = "rho.dat"
-const global stim = "stim.dat"
+const global rhodat = "rho.dat"
+const global stimdat = "stim.dat"
 
 const global dMs = 0.001
 const global dSec = 1.0
@@ -93,7 +92,7 @@ end
 
 
 function convertRho()
-    spikes = load_data(rho,Int64)
+    spikes = loadRho()
     count = 0::Int64
 
     for c in 1:length(spikes)
@@ -114,9 +113,53 @@ function convertRho()
     return spikeTrain
 end
 
-function interspike()
-
+function loadRho()
+    rho = load_data(rhodat,Int64)
+    return rho
 end
+
+function loadStim()
+    stimulus = load_data(stimdat,Float64)
+    return stimulus
+end
+
+function spikeTriggered()
+    rho = [0]::Vector{Int64}
+    rho = loadRho()
+    stimulus = [0.0]::Vector{Float64}
+    stimulus = loadStim()
+
+
+
+    count = 0::Int64
+    for i in 1:length(rho)
+        if rho[i] == 1
+            count += 1
+        end
+    end
+
+    averages = zeros(50)
+
+    for i in 1:length(rho)
+        if rho[i] == 1
+            index_s = i
+            for bt in 1:(50)
+                if i-bt > 0
+                    averages[51-bt] += stimulus[i-bt]
+                end
+            end
+        end
+    end
+
+    newAverages = zeros(100)
+
+    for i in 1:length(averages)
+        averages[i] = averages[i] / count
+    end
+
+    return averages
+end
+
 
 function queueOne()
     spikeTrain1 = [0.0]::Vector{Float64}
@@ -150,6 +193,23 @@ function queueTwo()
     println("Coefficient of Variation of rho.dat: \n",coeff)
 end
 
+function queueThree()
+
+    averages = spikeTriggered()
+    #println("STA Averages: \n", averages)
+    stimulus = [0.0]::Vector{Float64}
+    stimulus = loadStim()
+
+    plot(averages)
+    plt.title("Spike Triggered Average plot for Rho.dat and Stim.dat\n")
+    plt.xlabel("Sample window size/samples (1 per 2ms)")
+    plt.ylabel("Stimulus Value")
+    savefig("sta.svg")
+    println("File saved to sta.svg")
+
+end
+
 
 queueOne()
 queueTwo()
+queueThree()
