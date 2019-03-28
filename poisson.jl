@@ -13,11 +13,10 @@ function get_spike_train(rate::Float64,big_t::Float64,tau_ref::Float64)
     exp_rate=rate/(1-tau_ref*rate)
 
     t=randexp(Float64)/exp_rate
-    rng = MersenneTwister(1234)
 
     while t< big_t
         push!(spike_train,t)
-        t+=tau_ref+randexp(rng,Float64)/exp_rate
+        t+=tau_ref+randexp(Float64)/exp_rate
     end
 
     spike_train
