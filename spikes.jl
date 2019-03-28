@@ -13,3 +13,21 @@
 #   For intevals of 2,10,20,50ms calculate the average stimulus before
 #   a pair of spikes seperated by that interval
 #   For adjacency case and non adjacent
+
+include("load.jl")
+using Printf
+
+const global rho = "rho.dat"
+const global stim = "stim.dat"
+
+function fano()
+
+end
+
+function cv()
+
+end
+
+function interspike()
+
+end
