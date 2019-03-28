@@ -50,7 +50,6 @@ function fano(Vector{Float64}::spikes, wid::Float64, big_t::Float64)
 
     fanoFactor = s_var/s_mean
     return fanoFactor
-
 end
 
 
@@ -68,14 +67,14 @@ function queueOne()
     spikeTrain1 = get_spike_train(35.0*hz, 1000.0*sec, 0.0*ms)
     deleteat!(spikeTrain1,1)
 
-    #ff1 = fano(spikeTrain1)
-    coeff1 = cv(spikeTrain1)
+    ff1 = [fano(spikeTrain1, 10.0*ms, 1000.0*ms), fano(spikeTrain1, 50.0*ms, 1000.0*ms), fano(spikeTrain1, 100.0*ms, 1000.0*ms)]
+    #coeff1 = cv(spikeTrain1)
 
     spikeTrain2 = [0.0]::Vector{Float64}
     spikeTrain2 = get_spike_train(35.0*hz, 1000.0*sec, 5.0*ms)
     deleteat!(spikeTrain2,1)
 
-    #ff2 = fano(spikeTrain2)
-    coeff2 = cv(spikeTrain2)
+    ff2 = [fano(spikeTrain2, 10.0*ms, 1000.0*ms), fano(spikeTrain2, 50.0*ms, 1000.0*ms), fano(spikeTrain2, 100.0*ms, 1000.0*ms)]
+    #coeff2 = cv(spikeTrain2)
 
 end
