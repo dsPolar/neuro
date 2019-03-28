@@ -36,6 +36,6 @@ spike_train=[0.0]::Vector{Float64}
 spike_train = get_spike_train(rate,big_t,tau_ref)
 deleteat!(spike_train,1)
 
-println(length(spike_train)/big_t)
+#println(length(spike_train)/big_t)
 
-println(spike_train)
+#println(spike_train)
