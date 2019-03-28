@@ -1,4 +1,5 @@
 
+using Random
 
 function get_spike_train(rate::Float64,big_t::Float64,tau_ref::Float64)
 
@@ -9,13 +10,12 @@ function get_spike_train(rate::Float64,big_t::Float64,tau_ref::Float64)
 
     exp_rate=rate/(1-tau_ref*rate)
 
-    spike_train=Vector{Float64}(0)
-
     t=randexp(Float64)/exp_rate
+    rng = MersenneTwister(1234)
 
     while t< big_t
         push!(spike_train,t)
-        t+=tau_ref+randexp(Float64)/exp_rate
+        t+=tau_ref+randexp(rng,Float64)/exp_rate
     end
 
     spike_train
@@ -30,8 +30,9 @@ rate=15.0 *Hz
 tau_ref=5*ms
 
 big_t=5*sec
-
+spike_train=[0.0]::Vector{Float64}
 spike_train=get_spike_train(rate,big_t,tau_ref)
+deleteat!(spike_train,1)
 
 println(length(spike_train)/big_t)
 

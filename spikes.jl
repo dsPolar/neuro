@@ -15,19 +15,36 @@
 #   For adjacency case and non adjacent
 
 include("load.jl")
+include("poisson.jl")
 using Printf
 
 const global rho = "rho.dat"
 const global stim = "stim.dat"
 
-function fano()
+
+# F = Var(SC)/Mean(SC) per window
+function fano(Vector{Float64}::spikes, wid::Float64)
 
 end
 
-function cv()
+
+# CV = StdDev(ISI)/Mean(ISI)
+function cv(Vector{FLoat64}::spikes)
 
 end
 
 function interspike()
+
+end
+
+function queueOne()
+    spikeTrain = Vector{Float64}(0)
+    spikeTrain = get_spike_train(35.0, 1000.0, 0.0)
+    ff1 = fano(spikeTrain)
+    coeff1 = cv(spikeTrain)
+
+    spikeTrain = get_spike_train(35.0, 1000.0, 5.0)
+    ff2 = fano(spikeTrain)
+    coeff2 = cv(spikeTrain)
 
 end
