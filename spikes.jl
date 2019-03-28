@@ -6,6 +6,7 @@
 #   Fano Factor should use windows of width 10,50,100ms
 
 #Q2 Calculate the Fano Factor and CV for spike train as above for rho.dat
+#   Requires mapping rho.dat to spike times, 2ms sampling, 500Hz
 
 #Q3 Calculate and plot the spike triggered average for stim.dat
 
@@ -71,6 +72,16 @@ function cv(spikes::Vector{Float64})
     coeff = s_std/s_mean
     return coeff
 
+end
+
+
+function convertRho()
+    spikes = load_data(rho,Int64)
+    spikeTrain = [0.0]::Vector{Float64}
+    for i in 1:length(spikes)
+        spikeTrain = spikes[i]*2*ms
+    end
+    return spikeTrain
 end
 
 function interspike()
