@@ -38,13 +38,16 @@ function interspike()
 end
 
 function queueOne()
-    spikeTrain = Vector{Float64}(0)
-    spikeTrain = get_spike_train(35.0, 1000.0, 0.0)
-    ff1 = fano(spikeTrain)
-    coeff1 = cv(spikeTrain)
+    spikeTrain1 = [0.0]::Vector{Float64}
+    spikeTrain1 = get_spike_train(35.0, 1000.0, 0.0)
+    deleteat!(spikeTrain1,1)
+    ff1 = fano(spikeTrain1)
+    coeff1 = cv(spikeTrain1)
 
-    spikeTrain = get_spike_train(35.0, 1000.0, 5.0)
-    ff2 = fano(spikeTrain)
-    coeff2 = cv(spikeTrain)
+    spikeTrain2 = [0.0]::Vector{Float64}
+    spikeTrain2 = get_spike_train(35.0, 1000.0, 5.0)
+    deleteat!(spikeTrain2,1)
+    ff2 = fano(spikeTrain2)
+    coeff2 = cv(spikeTrain2)
 
 end

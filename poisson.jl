@@ -1,6 +1,8 @@
 
 using Random
 
+
+#Likely need to use deleteat!(Vector,1) to strip initialise value
 function get_spike_train(rate::Float64,big_t::Float64,tau_ref::Float64)
 
     if 1<=rate*tau_ref
@@ -17,7 +19,7 @@ function get_spike_train(rate::Float64,big_t::Float64,tau_ref::Float64)
         push!(spike_train,t)
         t+=tau_ref+randexp(rng,Float64)/exp_rate
     end
-    deleteat!(spike_train,1)
+
     spike_train
 
 end
@@ -32,7 +34,7 @@ tau_ref=5*ms
 big_t=5*sec
 spike_train=[0.0]::Vector{Float64}
 spike_train = get_spike_train(rate,big_t,tau_ref)
-
+deleteat!(spike_train,1)
 
 println(length(spike_train)/big_t)
 
