@@ -204,8 +204,8 @@ function queueThree()
     plt.title("Spike Triggered Average plot for Rho.dat and Stim.dat\n")
     plt.xlabel("Sample window size/samples (1 per 2ms)")
     plt.ylabel("Stimulus Value")
-    savefig("sta.svg")
-    println("File saved to sta.svg")
+    savefig("sta.jpg")
+    println("File saved to sta.jpg")
 
 end
 
