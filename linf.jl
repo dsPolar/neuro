@@ -119,25 +119,54 @@ end
 function updateVoltages2(v1::Float64, v2::Float64, sUp::Float64, sDown::Float64, E_s::Float64)
     update = Vector{Float64}(undef,2)
 
-    # Input voltage is from neuron 2
-    update[1] = ((E_L - v2) + (R_mI_e))    +    (R_mg_s * sDown * (E_s - v2))
+    # Input voltage is from neuron 1 + some synapse input
+    update[1] = ((E_L - v1) + (R_mI_e))    +    (R_mg_s * sDown * (E_s - v1))
     update[1] = update[1] * tau_m2
 
-    # Input voltage is from neuron 1
-    update[2] = ((E_L - v1) + (R_mI_e))    +    (R_mg_s * sUp *   (E_s - v1))
+    # Input voltage is from neuron 2 + some synapse input
+    update[2] = ((E_L - v2) + (R_mI_e))    +    (R_mg_s * sUp *   (E_s - v2))
     update[2] = update[2] * tau_m2
+
+    update[1] += v1
+    update[2] += v2
 
     return update
 end
 
+function updateSynapses(sUp::Float64, sDown::Float64)
+    update = Vector{Float64}(undef,2)
+
+    #Tau_s ds/dt = -s
+    update[1] = -sUp
+    update[1] = update[1] * tau_s
+
+    update[2] = -sDown
+    update[2] = update[2] * tau_s
+
+    update[1] += sUp
+    update[2] += sDown
+
+    return update
+end
+
+
 function plotVoltages2(v1::Vector{Float64}, v2::Vector{Float64}, file::String)
-    plot(v1,v2)
+    fig, ax = plt.subplots()
+    ax.plot(v1, "b-")
+    ax.plot(v2, "r--")
     plt.title("Modelled Pair of Linked Leaky Integrate and Fire Neurons\n")
     plt.xlabel("time/ms")
     plt.ylabel("Voltage/V")
     savefig(file)
     println("File saved to ", file, "\n")
 end
+
+
+
+
+
+
+
 
 function q2()
     voltage1 = zeros(1001)
@@ -148,12 +177,18 @@ function q2()
     synapseUp = 0.0::Float64
     synapseDown = 0.0::Float64
 
+    #Storage vectors for return values from update functions
     update = Vector{Float64}(undef,2)
+    updateS = Vector{Float64}(undef,2)
 
     for t in 2:1001
         update = updateVoltages2(voltage1[t-1], voltage2[t-1], synapseUp, synapseDown, 0.0)
         voltage1[t] = update[1]
         voltage2[t] = update[2]
+
+        updateS = updateSynapses(synapseUp,synapseDown)
+        synapseUp = updateS[1]
+        synapseDown = updateS[2]
 
         if checkReset2(voltage1[t])
             voltage1[t] = V_r2
@@ -168,6 +203,9 @@ function q2()
 
     synapseUp = 0.0
     synapseDown = 0.0
+    voltage1[1] = rand(Uniform(V_r2,V_t2))
+    voltage2[1] = rand(Uniform(V_r2,V_t2))
+
 
     for t in 2:1001
         update = updateVoltages2(voltage1[t-1], voltage2[t-1], synapseUp, synapseDown, -0.08)
