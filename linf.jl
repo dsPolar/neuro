@@ -32,7 +32,14 @@ const global delta_t = 0.001
 
 #Update a voltage amount for time step
 function voltageUpdate(voltage::Float64)
+    #Taken from conor's notes
+    # tau_m dV/dt = E_L - V + R_m*I_e
+    update = ((E_L - voltage) + (R_m*I_e))
+    update = update * tau_m
 
+    newVoltage = voltage + update
+
+    return newVoltage
 end
 
 #Check if voltage is above V_t
@@ -49,22 +56,38 @@ function resetVoltage()
     return V_r
 end
 
+
+#Use pyplot to plot voltages vector and save to file
 function plotVoltage(voltages::Vector{Float64})
     plot(voltages)
     plt.title("Modelled Leaky Integrate and Fire Neuron\n")
-    plt.xlabel("Time step/ms")
-    plt.ylabel("Membrane Voltage/V")
+    plt.xlabel("time/ms")
+    plt.ylabel("Voltage/V")
     savefig("linf.jpg")
     println("File saved to linf.jpg")
 end
 
+
+
+#Model a single linf neuron and plot voltage against time
 function q1()
     voltage = zeros(1001)
-    for t in 1:1000
-        voltage[t] = voltageUpdate(voltage[t-1])
-        if checkReset(voltage[t])
-            voltage[t] = resetVoltage()
+    voltage[1] = V_r
+    # 2:1001 to account for t[0] stored at voltage[1] due to Julia
+    for t in 2:1001
+        if checkReset(voltage[t-1])
+            voltage[t] = voltageUpdate(resetVoltage())
+        else
+            voltage[t] = voltageUpdate(voltage[t-1])
         end
-    end
 
+    end
+    plotVoltage(voltage)
 end
+
+
+
+
+
+# Call question functions
+q1()
