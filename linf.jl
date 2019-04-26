@@ -52,13 +52,13 @@ function checkReset(voltage::Float64)
 end
 
 #Use pyplot to plot voltages vector and save to file
-function plotVoltage(voltages::Vector{Float64})
+function plotVoltage(voltages::Vector{Float64}, path::String)
     plot(voltages)
     plt.title("Modelled Leaky Integrate and Fire Neuron\n")
     plt.xlabel("time/ms")
     plt.ylabel("Voltage/V")
-    savefig("linf.jpg")
-    println("File saved to linf.jpg")
+    savefig(path)
+    println("File saved to ",path)
 end
 
 
@@ -75,7 +75,7 @@ function q1()
         end
 
     end
-    plotVoltage(voltage)
+    plotVoltage(voltage, "linf.jpg")
 end
 
 
@@ -225,8 +225,53 @@ function q2()
     plotVoltages2(voltage1, voltage2, "pairIn.jpg")
 end
 
+function variableIUpdateVoltage(voltage::Float64, input_i::Float64)
+    update = ((E_L - voltage) + (R_m*input_i))
+    update = update * tau_m
+
+    newVoltage = voltage + update
+
+    return newVoltage
+end
+
+
+const global nA = 0.000000001
+
+function plotSpikeCountsCurrent(spikes::Vector{Int64}, currents::Vector{Float64}, path::String)
+    fig, ax = plt.subplots()
+    ax.plot(currents,spikes, "b-")
+    plt.title("Firing Rate of LINF neuron with variable Input Current\n")
+    plt.xlabel("Input Current/A")
+    plt.ylabel("Firing Rate/Hz")
+    savefig(path)
+    println("File saved to ", path, "\n")
+end
+
+
+function q3_3()
+    voltage = zeros(1001)
+    voltage[1] = V_r
+    currentTrial = 1::Int64
+    spikeCounts = zeros(Int64,31)
+    currents = zeros(31)
+    # 2:1001 to account for t[0] stored at voltage[1] due to Julia
+    for i in 20:50
+        currents[currentTrial] = i * 0.1 * nA
+        for t in 2:1001
+            voltage[t] = variableIUpdateVoltage(voltage[t-1], currents[currentTrial])
+            if checkReset(voltage[t])
+                voltage[t] = V_r
+                spikeCounts[currentTrial] += 1
+            end
+        end
+        currentTrial += 1
+    end
+    plotSpikeCountsCurrent(spikeCounts,currents,"firing.jpg")
+end
+
 
 
 # Call question functions
-q1()
-q2()
+#q1()
+#q2()
+q3_3()
