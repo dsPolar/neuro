@@ -28,7 +28,8 @@ const global C_m = 1/R_m
 const global I_e = 0.0000000031
 const global delta_t = 0.001
 
-
+#TODO Power of 10 error somewhere in code
+#FIXME Likely in a constant
 
 #Update a voltage amount for time step
 function voltageUpdate(voltage::Float64)
@@ -36,7 +37,7 @@ function voltageUpdate(voltage::Float64)
     # tau_m dV/dt = E_L - V + R_m*I_e
     update = ((E_L - voltage) + (R_m*I_e))
     update = update * tau_m
-
+    update = update * 10
     newVoltage = voltage + update
 
     return newVoltage
@@ -272,6 +273,6 @@ end
 
 
 # Call question functions
-#q1()
-#q2()
+q1()
+q2()
 q3_3()
